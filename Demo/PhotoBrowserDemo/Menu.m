@@ -14,6 +14,7 @@
     [[[UIAlertView alloc] initWithTitle:title message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 }
 
+
 @end
 
 @implementation Menu
@@ -107,8 +108,11 @@
         [photos addObject:photo];
     }
     
+    CGRect frame = [((UIView *)sender).superview convertRect:((UIView *)sender).frame toView:nil];
+    
     // Create and setup browser
-    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:photos animatedFromView:sender]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:[NSArray arrayWithObjects:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f_b.jpg"], @"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_b.jpg", [NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_b.jpg"], @"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_b.jpg", nil] animatedFromView:sender viewOriginalFrame:frame backgroundScreenshot:nil]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+    
     browser.delegate = self;
     browser.displayActionButton = NO;
     browser.displayArrowButton = YES;
@@ -119,6 +123,7 @@
     
     // Show
     [self presentViewController:browser animated:YES completion:nil];
+
 }
 
 #pragma mark - TableView DataSource
@@ -258,23 +263,16 @@
 
 - (void)photoBrowser:(IDMPhotoBrowser *)photoBrowser didShowPhotoAtIndex:(NSUInteger)pageIndex
 {
-    id <IDMPhoto> photo = [photoBrowser photoAtIndex:pageIndex];
-    NSLog(@"Did show photoBrowser with photo index: %d, photo caption: %@", pageIndex, photo.caption);
 }
 
 - (void)photoBrowser:(IDMPhotoBrowser *)photoBrowser didDismissAtPageIndex:(NSUInteger)pageIndex
 {
-    id <IDMPhoto> photo = [photoBrowser photoAtIndex:pageIndex];
-    NSLog(@"Did dismiss photoBrowser with photo index: %d, photo caption: %@", pageIndex, photo.caption);
+
 }
 
 - (void)photoBrowser:(IDMPhotoBrowser *)photoBrowser didDismissActionSheetWithButtonIndex:(NSUInteger)buttonIndex photoIndex:(NSUInteger)photoIndex
 {
-    id <IDMPhoto> photo = [photoBrowser photoAtIndex:photoIndex];
-    NSLog(@"Did dismiss actionSheet with photo index: %d, photo caption: %@", photoIndex, photo.caption);
-    
-    NSString *title = [NSString stringWithFormat:@"Option %d", buttonIndex+1];
-    [UIAlertView showAlertViewWithTitle:title];
+
 }
 
 @end

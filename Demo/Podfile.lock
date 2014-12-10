@@ -21,16 +21,32 @@ PODS:
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - DACircularProgress (2.2.0)
+  - ImageEffects (0.0.4)
   - pop (1.0.7)
+  - Reveal-iOS-SDK (1.0.6)
 
 DEPENDENCIES:
   - AFNetworking
   - DACircularProgress
+  - ImageEffects (from `https://github.com/JefferyJeffery/ImageEffects.git`, tag `0.0.4`)
   - pop
+  - Reveal-iOS-SDK
+
+EXTERNAL SOURCES:
+  ImageEffects:
+    :git: https://github.com/JefferyJeffery/ImageEffects.git
+    :tag: 0.0.4
+
+CHECKOUT OPTIONS:
+  ImageEffects:
+    :git: https://github.com/JefferyJeffery/ImageEffects.git
+    :tag: 0.0.4
 
 SPEC CHECKSUMS:
   AFNetworking: 0f54cb5d16ce38c1b76948faffb8d5fb705021c7
   DACircularProgress: 3b41941891a56dc6aa17971f5322a9a38a6f446e
+  ImageEffects: b78527dcf84ac1feb9f76cb89e954bc224d6c4fd
   pop: 2f14a1ea61339767af9e66741b418c831b3844df
+  Reveal-iOS-SDK: 74a39b426dbc915962704ed24f43ee32ae7797f9
 
 COCOAPODS: 0.35.0
