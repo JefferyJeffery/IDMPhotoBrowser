@@ -9,5 +9,12 @@
 #import "IDMPhotoBrowserModel.h"
 
 @implementation IDMPhotoBrowserModel
-
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.photos = [NSMutableArray new];
+    }
+    return self;
+}
 @end

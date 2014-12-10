@@ -9,8 +9,11 @@
 #import <QuartzCore/QuartzCore.h>
 #import "IDMPhotoBrowser.h"
 #import "IDMZoomingScrollView.h"
+#import "IDMPhotoBrowserModel.h"
 
 #import "pop/POP.h"
+
+#import <ImageEffects/ImageEffects.h>
 
 #ifndef IDMPhotoBrowserLocalizedStrings
 #define IDMPhotoBrowserLocalizedStrings(key) \
@@ -19,6 +22,9 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 
 // Private
 @interface IDMPhotoBrowser () {
+	// Data
+    IDMPhotoBrowserModel *_model;
+    
 	// Data
     NSMutableArray *_photos;
     
@@ -66,7 +72,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
     BOOL _isdraggingPhoto;
     
     CGRect _senderViewOriginalFrame;
-    //UIImage *_backgroundScreenshot;
+    UIImage *_backgroundScreenshot;
     
     UIWindow *_applicationWindow;
 	
@@ -124,6 +130,17 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 - (void)loadAdjacentPhotosIfNecessary:(id<IDMPhoto>)photo;
 - (void)releaseAllUnderlyingPhotos;
 
+
+//Full Screen Transition
+@property (nonatomic, strong) UIWindow *fullScreenWindow;
+
+@property (nonatomic, strong) UIImage *iamge;
+@property (assign, nonatomic) CGRect imageViewFrameInWindow;
+
+@property (nonatomic, strong) UIImageView *snapshotView;
+@property (nonatomic, strong) UIImageView *blurSnapshotView;
+@property (nonatomic, strong) UIImageView *photoImageView;
+
 @end
 
 // IDMPhotoBrowser
@@ -154,6 +171,8 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
         _visiblePages = [NSMutableSet new];
         _recycledPages = [NSMutableSet new];
         _photos = [NSMutableArray new];
+        _model = [[IDMPhotoBrowserModel alloc] init];
+        
         
         _initalPageIndex = 0;
         _autoHide = YES;
@@ -178,7 +197,10 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
         _backgroundScaleFactor = 1.0;
         _animationDuration = 0.28;
         _senderViewForAnimation = nil;
+        _senderViewOriginalFrame = CGRectZero;
         _scaleImage = nil;
+        
+        _backgroundScreenshot = nil;
         
         _isdraggingPhoto = NO;
         
@@ -242,6 +264,21 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
         _senderViewForAnimation = view;
 	}
 	return self;
+}
+
+- (id)initWithPhotoURLs:(NSArray *)photoURLsArray
+       animatedFromView:(UIView*)view
+      viewOriginalFrame:(CGRect)originalFrame
+   backgroundScreenshot:(UIImage *)backgroundScreenshot
+{
+    if ((self = [self init])) {
+        NSArray *photosArray = [IDMPhoto photosWithURLs:photoURLsArray];
+        _photos = [[NSMutableArray alloc] initWithArray:photosArray];
+        _senderViewForAnimation = view;
+        _senderViewOriginalFrame = originalFrame;
+        _backgroundScreenshot = backgroundScreenshot;
+    }
+    return self;
 }
 
 - (void)dealloc {
@@ -375,10 +412,12 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 - (void)performPresentAnimation {
     self.view.alpha = 0.0f;
     
-    UIImage *imageFromView = _scaleImage ? _scaleImage : [self getImageFromView:_senderViewForAnimation];
+    UIImage *imageFromView = _scaleImage ?: [self getImageFromView:_senderViewForAnimation];
     imageFromView = [self rotateImageToCurrentOrientation:imageFromView];
     
-    _senderViewOriginalFrame = [_senderViewForAnimation.superview convertRect:_senderViewForAnimation.frame toView:nil];
+    if (CGRectEqualToRect(CGRectZero, _senderViewOriginalFrame)) {
+        _senderViewOriginalFrame = [_senderViewForAnimation.superview convertRect:_senderViewForAnimation.frame toView:nil];
+    }
     
     CGRect screenBound = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenBound.size.width;
@@ -1124,7 +1163,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 - (void)updateToolbar {
     // Counter
 	if ([self numberOfPhotos] > 1) {
-		_counterLabel.text = [NSString stringWithFormat:@"%u %@ %lu", _currentPageIndex+1, IDMPhotoBrowserLocalizedStrings(@"of"), (unsigned long)[self numberOfPhotos]];
+		_counterLabel.text = [NSString stringWithFormat:@"%@ %@ %lu", @(_currentPageIndex+1), IDMPhotoBrowserLocalizedStrings(@"of"), (unsigned long)[self numberOfPhotos]];
 	} else {
 		_counterLabel.text = nil;
 	}
@@ -1234,6 +1273,8 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
         [self prepareForClosePhotoBrowser];
         [self dismissPhotoBrowserAnimated:YES];
     }
+    
+    [self dismissFullScreenViewController];
 }
 
 - (void)actionButtonPressed:(id)sender {
@@ -1315,4 +1356,95 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 	}
 }
 
+
+#pragma mark - fullScreenWindow
+-(UIWindow *)fullScreenWindow
+{
+    if (_fullScreenWindow == nil) {
+        _fullScreenWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        _fullScreenWindow.windowLevel = UIWindowLevelStatusBar + 1;
+    }
+    
+    return _fullScreenWindow;
+}
+
+- (UIImageView *)snapshotFromParentmostViewController:(UIViewController *)viewController {
+    
+    UIViewController *presentingViewController = viewController.view.window.rootViewController;
+    while (presentingViewController.presentedViewController) presentingViewController = presentingViewController.presentedViewController;
+    UIImage *image = [UIImage takeSnapshotOfView:presentingViewController.view];
+    return [[UIImageView alloc] initWithImage:image];
+}
+
+- (void)showFromViewController:(UIViewController *)viewController
+{
+//    self.snapshotView = [self snapshotFromParentmostViewController:viewController];
+//    
+//    UIImage *blurImage = [[UIImage takeSnapshotOfView:_snapshotView] applyLightEffect];
+//    self.blurSnapshotView = [[UIImageView alloc] initWithImage:blurImage];
+//    self.blurSnapshotView.alpha = 0;
+//    
+//    [self.view addSubview:self.snapshotView];
+//    [self.view addSubview:self.blurSnapshotView];
+//    
+//    self.photoImageView = [[UIImageView alloc] initWithImage:self.iamge];
+//    self.photoImageView.contentMode = UIViewContentModeScaleAspectFit;
+//    self.photoImageView.frame = self.imageViewFrameInWindow;
+//    [self.view addSubview:self.photoImageView];
+    
+    
+    
+    [self.fullScreenWindow setRootViewController:self];
+    [self.fullScreenWindow makeKeyAndVisible];
+    
+//    NSLog(@"%@",[NSDate date]);
+//    [UIView animateKeyframesWithDuration:0.55
+//                                   delay:0.0
+//                                 options:UIViewKeyframeAnimationOptionCalculationModeLinear | UIViewKeyframeAnimationOptionCalculationModeCubic
+//                              animations:^{
+//                                  [UIView addKeyframeWithRelativeStartTime:0.0
+//                                                          relativeDuration:0.3 animations:^{
+//                                                              self.blurSnapshotView.alpha = 1.0;
+//                                                          }];
+//                                  
+//                                  [UIView addKeyframeWithRelativeStartTime:0.0
+//                                                          relativeDuration:0.2 animations:^{
+//                                                              self.photoImageView.frame = self.view.bounds;
+//                                                          }];
+//                              } completion:^(BOOL finished) {
+//                                  
+//                              }];
+    
+    
+}
+
+- (void)dismissFullScreenViewController
+{
+//    if (self.fullScreenWindow) {
+//        self.fullScreenWindow.hidden = YES;
+//        self.fullScreenWindow = nil;
+//    }
+
+//    [UIView animateKeyframesWithDuration:0.3
+//                                   delay:0.0
+//                                 options:UIViewKeyframeAnimationOptionCalculationModeLinear
+//                              animations:^{
+//                                  [UIView addKeyframeWithRelativeStartTime:0.0
+//                                                          relativeDuration:0.3 animations:^{
+//                                                              self.blurSnapshotView.alpha = 0.0;
+//                                                          }];
+//                                  
+//                                  [UIView addKeyframeWithRelativeStartTime:0.0
+//                                                          relativeDuration:0.3 animations:^{
+//                                                              self.photoImageView.frame = self.imageViewFrameInWindow;
+//                                                          }];
+//                              } completion:^(BOOL finished) {
+//                                  [self.photoImageView removeFromSuperview];
+//                                  [self.blurSnapshotView removeFromSuperview];
+//                                  [self.snapshotView removeFromSuperview];
+//                                  
+//                                  self.fullScreenWindow.hidden = YES;
+//                                  self.fullScreenWindow = nil;
+//                              }];
+}
 @end

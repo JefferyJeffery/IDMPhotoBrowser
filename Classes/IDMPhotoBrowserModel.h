@@ -9,5 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface IDMPhotoBrowserModel : NSObject
+@property (strong , nonatomic) NSMutableArray *photos;
 
 @end

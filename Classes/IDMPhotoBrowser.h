@@ -44,6 +44,7 @@
 @property (nonatomic, weak) UIImage *doneButtonImage;
 @property (nonatomic, weak) UIColor *trackTintColor, *progressTintColor;
 
+//Animation
 @property (nonatomic, weak) UIImage *scaleImage;
 
 @property (nonatomic) BOOL arrowButtonsChangePhotosAnimated;
@@ -70,6 +71,13 @@
 // Init with NSURL objects (animated)
 - (id)initWithPhotoURLs:(NSArray *)photoURLsArray animatedFromView:(UIView*)view;
 
+// Init with NSURL objects (animated with background)
+- (id)initWithPhotoURLs:(NSArray *)photoURLsArray
+       animatedFromView:(UIView*)view
+      viewOriginalFrame:(CGRect)originalFrame
+   backgroundScreenshot:(UIImage *)backgroundScreenshot;
+
+
 // Reloads the photo browser and refetches data
 - (void)reloadData;
 
@@ -79,4 +87,6 @@
 // Get IDMPhoto at index
 - (id<IDMPhoto>)photoAtIndex:(NSUInteger)index;
 
+- (void)showFromViewController:(UIViewController *)viewController;
+- (void)dismissFullScreenViewController;
 @end
