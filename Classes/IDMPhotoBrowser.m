@@ -412,7 +412,8 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 - (void)performPresentAnimation {
     self.view.alpha = 0.0f;
     
-    UIImage *imageFromView = _scaleImage ?: [self getImageFromView:_senderViewForAnimation];
+//    UIImage *imageFromView = _scaleImage ?: [self getImageFromView:_senderViewForAnimation];
+    UIImage *imageFromView = _scaleImage ?: [UIImage takeSnapshotOfView:_senderViewForAnimation];
     imageFromView = [self rotateImageToCurrentOrientation:imageFromView];
     
     if (CGRectEqualToRect(CGRectZero, _senderViewOriginalFrame)) {
