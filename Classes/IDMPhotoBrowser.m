@@ -22,29 +22,29 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 
 // Private
 @interface IDMPhotoBrowser () {
-	// Data
+    // Data
     IDMPhotoBrowserModel *_model;
     
-	// Data
+    // Data
     NSMutableArray *_photos;
     
-	// Views
-	UIScrollView *_pagingScrollView;
-	
+    // Views
+    UIScrollView *_pagingScrollView;
+    
     // Gesture
     UIPanGestureRecognizer *_panGesture;
     
-	// Paging
+    // Paging
     NSMutableSet *_visiblePages, *_recycledPages;
     NSUInteger _pageIndexBeforeRotation;
     NSUInteger _currentPageIndex;
-	
+    
     // Buttons
     UIButton *_doneButton;
     
-	// Toolbar
-	UIToolbar *_toolbar;
-	UIBarButtonItem *_previousButton, *_nextButton, *_actionButton;
+    // Toolbar
+    UIToolbar *_toolbar;
+    UIBarButtonItem *_previousButton, *_nextButton, *_actionButton;
     UIBarButtonItem *_counterButton;
     UILabel *_counterLabel;
     
@@ -57,7 +57,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
     
     // Appearance
     //UIStatusBarStyle _previousStatusBarStyle;
-	BOOL _statusBarOriginallyHidden;
+    BOOL _statusBarOriginallyHidden;
     
     // Present
     UIView *_senderView;
@@ -66,7 +66,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
     
     // Misc
     BOOL _performingLayout;
-	BOOL _rotating;
+    BOOL _rotating;
     BOOL _viewIsActive; // active as in it's in the view heirarchy
     BOOL _autoHide;
     NSInteger _initalPageIndex;
@@ -77,8 +77,8 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
     UIImage *_backgroundScreenshot;
     
     UIWindow *_applicationWindow;
-	
-	// iOS 7
+    
+    // iOS 7
     UIViewController *_applicationTopViewController;
     int _previousModalPresentationStyle;
 }
@@ -132,17 +132,6 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 - (void)loadAdjacentPhotosIfNecessary:(id<IDMPhoto>)photo;
 - (void)releaseAllUnderlyingPhotos;
 
-
-//Full Screen Transition
-@property (nonatomic, strong) UIWindow *fullScreenWindow;
-
-@property (nonatomic, strong) UIImage *iamge;
-@property (assign, nonatomic) CGRect imageViewFrameInWindow;
-
-@property (nonatomic, strong) UIImageView *snapshotView;
-@property (nonatomic, strong) UIImageView *blurSnapshotView;
-@property (nonatomic, strong) UIImageView *photoImageView;
-
 @end
 
 // IDMPhotoBrowser
@@ -167,8 +156,8 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
         // Defaults
         self.hidesBottomBarWhenPushed = YES;
         _currentPageIndex = 0;
-		_performingLayout = NO; // Reset on view did appear
-		_rotating = NO;
+        _performingLayout = NO; // Reset on view did appear
+        _rotating = NO;
         _viewIsActive = NO;
         _visiblePages = [NSMutableSet new];
         _recycledPages = [NSMutableSet new];
@@ -188,9 +177,9 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
         _displayCounterLabel = NO;
         
         _forceHideStatusBar = NO;
-//        _usePopAnimation = NO;
-		_disableVerticalSwipe = NO;
-		
+        //        _usePopAnimation = NO;
+        _disableVerticalSwipe = NO;
+        
         _useWhiteBackgroundColor = NO;
         _leftArrowImage = _rightArrowImage = _leftArrowSelectedImage = _rightArrowSelectedImage = nil;
         
@@ -211,22 +200,20 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
             self.automaticallyAdjustsScrollViewInsets = NO;
         
         _applicationWindow = [[[UIApplication sharedApplication] delegate] window];
-		
-//		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0"))
-//		{
-//			self.modalPresentationStyle = UIModalPresentationCustom;
-//			self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-//		}
-//		else
-//		{
-//			_applicationTopViewController = [self topviewController];
-//			_previousModalPresentationStyle = _applicationTopViewController.modalPresentationStyle;
-//			_applicationTopViewController.modalPresentationStyle = UIModalPresentationCurrentContext;
-//			self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-//		}
-//		
-//		self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-
+        
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0"))
+        {
+            self.modalPresentationStyle = UIModalPresentationCustom;
+            self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        }
+        else
+        {
+            _applicationTopViewController = [self topviewController];
+            _previousModalPresentationStyle = _applicationTopViewController.modalPresentationStyle;
+            _applicationTopViewController.modalPresentationStyle = UIModalPresentationCurrentContext;
+            self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        }
+        
         self.modalPresentationStyle = UIModalPresentationCustom;
         self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
         
@@ -239,52 +226,6 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
     
     return self;
 }
-
-//- (id)initWithPhotos:(NSArray *)photosArray {
-//    if ((self = [self init])) {
-//		_photos = [[NSMutableArray alloc] initWithArray:photosArray];
-//	}
-//	return self;
-//}
-//
-//- (id)initWithPhotos:(NSArray *)photosArray animatedFromView:(UIView*)view {
-//    if ((self = [self init])) {
-//		_photos = [[NSMutableArray alloc] initWithArray:photosArray];
-//        _senderViewForAnimation = view;
-//	}
-//	return self;
-//}
-//
-//- (id)initWithPhotoURLs:(NSArray *)photoURLsArray {
-//    if ((self = [self init])) {
-//        NSArray *photosArray = [IDMPhoto photosWithURLs:photoURLsArray];
-//		_photos = [[NSMutableArray alloc] initWithArray:photosArray];
-//	}
-//	return self;
-//}
-//
-//- (id)initWithPhotoURLs:(NSArray *)photoURLsArray animatedFromView:(UIView*)view {
-//    if ((self = [self init])) {
-//        NSArray *photosArray = [IDMPhoto photosWithURLs:photoURLsArray];
-//		_photos = [[NSMutableArray alloc] initWithArray:photosArray];
-//        _senderViewForAnimation = view;
-//	}
-//	return self;
-//}
-//
-//- (id)initWithPhotos:(NSArray *)photosArray
-//    animatedFromView:(UIView*)view
-//   viewOriginalFrame:(CGRect)originalFrame
-//backgroundScreenshot:(UIImage *)backgroundScreenshot
-//{
-//    if ((self = [self init])) {
-//        _photos = [[NSMutableArray alloc] initWithArray:photosArray];
-//        _senderViewForAnimation = view;
-//        _senderViewOriginalFrame = originalFrame;
-//        _backgroundScreenshot = backgroundScreenshot;
-//    }
-//    return self;
-//}
 
 - (id)initWithPhotos:(NSArray *)photosArray
          contentMode:(UIViewContentMode)contentMode
@@ -327,11 +268,11 @@ senderViewOriginalFrame:(CGRect)originalFrame
 }
 
 - (void)didReceiveMemoryWarning {
-	// Release any cached data, images, etc that aren't in use.
+    // Release any cached data, images, etc that aren't in use.
     [self releaseAllUnderlyingPhotos];
-	[_recycledPages removeAllObjects];
-	
-	// Releases the view if it doesn't have a superview.
+    [_recycledPages removeAllObjects];
+    
+    // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
 }
 
@@ -448,14 +389,14 @@ senderViewOriginalFrame:(CGRect)originalFrame
     self.view.alpha = 0.0f;
     
     //    UIImage *imageFromView = _scaleImage ?: [self getImageFromView:_senderViewForAnimation];
-//    UIImage *imageFromView = _scaleImage ?: [UIImage takeSnapshotOfView:_senderViewForAnimation];
-//    imageFromView = [self rotateImageToCurrentOrientation:imageFromView];
+    //    UIImage *imageFromView = _scaleImage ?: [UIImage takeSnapshotOfView:_senderViewForAnimation];
+    //    imageFromView = [self rotateImageToCurrentOrientation:imageFromView];
     _senderView.hidden = YES;
     
     UIImage *imageFromView = [self rotateImageToCurrentOrientation:_scaleImage];
-//    if (CGRectEqualToRect(CGRectZero, _senderViewOriginalFrame)) {
-//        _senderViewOriginalFrame = [_senderViewForAnimation.superview convertRect:_senderViewForAnimation.frame toView:nil];
-//    }
+    //    if (CGRectEqualToRect(CGRectZero, _senderViewOriginalFrame)) {
+    //        _senderViewOriginalFrame = [_senderViewForAnimation.superview convertRect:_senderViewForAnimation.frame toView:nil];
+    //    }
     
     CGRect screenBound = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenBound.size.width;
@@ -487,27 +428,27 @@ senderViewOriginalFrame:(CGRect)originalFrame
     float scaleFactor = (imageFromView ? imageFromView.size.width : screenWidth) / screenWidth;
     CGRect finalImageViewFrame = CGRectMake(0, (screenHeight/2)-((imageFromView.size.height / scaleFactor)/2), screenWidth, imageFromView.size.height / scaleFactor);
     
-//    if(_usePopAnimation)
-//    {
-//        [self animateView:resizableImageView
-//                  toFrame:finalImageViewFrame
-//               completion:completion];
-//    }
-//    else
-//    {
-        [UIView animateWithDuration:_animationDuration animations:^{
-            resizableImageView.layer.frame = finalImageViewFrame;
-        } completion:^(BOOL finished) {
-            completion();
-        }];
-//    }
+    //    if(_usePopAnimation)
+    //    {
+    //        [self animateView:resizableImageView
+    //                  toFrame:finalImageViewFrame
+    //               completion:completion];
+    //    }
+    //    else
+    //    {
+    [UIView animateWithDuration:_animationDuration animations:^{
+        resizableImageView.layer.frame = finalImageViewFrame;
+    } completion:^(BOOL finished) {
+        completion();
+    }];
+    //    }
 }
 
 
 
 - (void)performPresentAnimationCompletion:(void (^)(void))animationCompletion {
     _performingLayout = YES;
-
+    
     _senderView.hidden = YES;
     
     UIImage *imageFromView = [self rotateImageToCurrentOrientation:_scaleImage];
@@ -559,23 +500,23 @@ senderViewOriginalFrame:(CGRect)originalFrame
                                                                 animations:^{
                                                                     resizableImageView.layer.frame = finalImageViewFrame;
                                                                 }];
-
                                   
-                            } completion:^(BOOL finished) {
-
-                                for (UIView *view in _visiblePages) {
-                                    view.alpha = 1.0;
-                                }
-                                
-                                [fadeView removeFromSuperview];
-                                [resizableImageView removeFromSuperview];
-                                
-                                // Layout
-                                [self.view setNeedsLayout];
-                                
-                                _performingLayout = NO;
-                                animationCompletion();
-                            }];
+                                  
+                              } completion:^(BOOL finished) {
+                                  
+                                  for (UIView *view in _visiblePages) {
+                                      view.alpha = 1.0;
+                                  }
+                                  
+                                  [fadeView removeFromSuperview];
+                                  [resizableImageView removeFromSuperview];
+                                  
+                                  // Layout
+                                  [self.view setNeedsLayout];
+                                  
+                                  _performingLayout = NO;
+                                  animationCompletion();
+                              }];
 }
 
 - (void)performCloseAnimationWithScrollView:(IDMZoomingScrollView*)scrollView {
@@ -620,20 +561,20 @@ senderViewOriginalFrame:(CGRect)originalFrame
         self.view.backgroundColor = [UIColor clearColor];
     } completion:nil];
     
-//    if(_usePopAnimation)
-//    {
-//        [self animateView:resizableImageView
-//                  toFrame:_senderViewOriginalFrame
-//               completion:completion];
-//    }
-//    else
-//    {
-        [UIView animateWithDuration:_animationDuration animations:^{
-            resizableImageView.layer.frame = _senderViewOriginalFrame;
-        } completion:^(BOOL finished) {
-            completion();
-        }];
-//    }
+    //    if(_usePopAnimation)
+    //    {
+    //        [self animateView:resizableImageView
+    //                  toFrame:_senderViewOriginalFrame
+    //               completion:completion];
+    //    }
+    //    else
+    //    {
+    [UIView animateWithDuration:_animationDuration animations:^{
+        resizableImageView.layer.frame = _senderViewOriginalFrame;
+    } completion:^(BOOL finished) {
+        completion();
+    }];
+    //    }
 }
 
 #pragma mark - Genaral
@@ -654,11 +595,11 @@ senderViewOriginalFrame:(CGRect)originalFrame
     [self dismissViewControllerAnimated:animated completion:^{
         if ([_delegate respondsToSelector:@selector(photoBrowser:didDismissAtPageIndex:)])
             [_delegate photoBrowser:self didDismissAtPageIndex:_currentPageIndex];
-		
-		if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(@"7.0"))
-		{
-			_applicationTopViewController.modalPresentationStyle = _previousModalPresentationStyle;
-		}
+        
+        if (SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(@"7.0"))
+        {
+            _applicationTopViewController.modalPresentationStyle = _previousModalPresentationStyle;
+        }
     }];
 }
 
@@ -695,25 +636,25 @@ senderViewOriginalFrame:(CGRect)originalFrame
 
 - (void)viewDidLoad {
     // Transition animation
-//    [self performPresentAnimationCompletion:^{
-//        [self reloadData];
-//    }];
+    //    [self performPresentAnimationCompletion:^{
+    //        [self reloadData];
+    //    }];
     UIInterfaceOrientation currentOrientation = [UIApplication sharedApplication].statusBarOrientation;
     
     // View
     self.view.clipsToBounds = YES;
     
-	// Setup paging scrolling view
-	CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
-	_pagingScrollView = [[UIScrollView alloc] initWithFrame:pagingScrollViewFrame];
+    // Setup paging scrolling view
+    CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
+    _pagingScrollView = [[UIScrollView alloc] initWithFrame:pagingScrollViewFrame];
     //_pagingScrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	_pagingScrollView.pagingEnabled = YES;
-	_pagingScrollView.delegate = self;
-	_pagingScrollView.showsHorizontalScrollIndicator = NO;
-	_pagingScrollView.showsVerticalScrollIndicator = NO;
-	_pagingScrollView.backgroundColor = [UIColor clearColor];
+    _pagingScrollView.pagingEnabled = YES;
+    _pagingScrollView.delegate = self;
+    _pagingScrollView.showsHorizontalScrollIndicator = NO;
+    _pagingScrollView.showsVerticalScrollIndicator = NO;
+    _pagingScrollView.backgroundColor = [UIColor clearColor];
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
-	[self.view addSubview:_pagingScrollView];
+    [self.view addSubview:_pagingScrollView];
     
     // Close Button
     _doneButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -781,7 +722,7 @@ senderViewOriginalFrame:(CGRect)originalFrame
     _actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction
                                                                   target:self
                                                                   action:@selector(actionButtonPressed:)];
-
+    
     // Toolbar items & navigation
     // Toolbar
     _toolbar = [[UIToolbar alloc] initWithFrame:[self frameForToolbarAtOrientation:currentOrientation]];
@@ -836,7 +777,7 @@ senderViewOriginalFrame:(CGRect)originalFrame
     if(! _disableVerticalSwipe)
         [self.view addGestureRecognizer:_panGesture];
     
-	// Super
+    // Super
     [super viewDidLoad];
 }
 
@@ -846,18 +787,18 @@ senderViewOriginalFrame:(CGRect)originalFrame
     
     // Update
     [self performPresentAnimationCompletion:^{
-
+        
     }];
-//        [self reloadData];
+    //        [self reloadData];
     
     // Super
-	[super viewWillAppear:animated];
+    [super viewWillAppear:animated];
     
     // Status Bar
     _statusBarOriginallyHidden = [UIApplication sharedApplication].statusBarHidden;
     
     // Update UI
-	[self hideControlsAfterDelay];
+    [self hideControlsAfterDelay];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -867,7 +808,7 @@ senderViewOriginalFrame:(CGRect)originalFrame
 
 // Release any retained subviews of the main view.
 - (void)viewDidUnload {
-	_currentPageIndex = 0;
+    _currentPageIndex = 0;
     _pagingScrollView = nil;
     _visiblePages = nil;
     _recycledPages = nil;
@@ -904,14 +845,14 @@ senderViewOriginalFrame:(CGRect)originalFrame
 }
 
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
-	return UIStatusBarAnimationFade;
+    return UIStatusBarAnimationFade;
 }
 
 #pragma mark - Layout
 
 - (void)viewWillLayoutSubviews {
-	// Flag
-	_performingLayout = YES;
+    // Flag
+    _performingLayout = YES;
     
     UIInterfaceOrientation currentOrientation = [UIApplication sharedApplication].statusBarOrientation;
     
@@ -923,32 +864,32 @@ senderViewOriginalFrame:(CGRect)originalFrame
     
     
     // Remember index
-	NSUInteger indexPriorToLayout = _currentPageIndex;
-	
-	// Get paging scroll view frame to determine if anything needs changing
-	CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
+    NSUInteger indexPriorToLayout = _currentPageIndex;
     
-	// Frame needs changing
-	_pagingScrollView.frame = pagingScrollViewFrame;
-	
-	// Recalculate contentSize based on current orientation
-	_pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
-	
-	// Adjust frames and configuration of each visible page
-	for (IDMZoomingScrollView *page in _visiblePages) {
+    // Get paging scroll view frame to determine if anything needs changing
+    CGRect pagingScrollViewFrame = [self frameForPagingScrollView];
+    
+    // Frame needs changing
+    _pagingScrollView.frame = pagingScrollViewFrame;
+    
+    // Recalculate contentSize based on current orientation
+    _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
+    
+    // Adjust frames and configuration of each visible page
+    for (IDMZoomingScrollView *page in _visiblePages) {
         NSUInteger index = PAGE_INDEX(page);
-		page.frame = [self frameForPageAtIndex:index];
+        page.frame = [self frameForPageAtIndex:index];
         page.captionView.frame = [self frameForCaptionView:page.captionView atIndex:index];
-		[page setMaxMinZoomScalesForCurrentBounds];
-	}
-	
-	// Adjust contentOffset to preserve page location based on values collected prior to location
-	_pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:indexPriorToLayout];
-	[self didStartViewingPageAtIndex:_currentPageIndex]; // initial
+        [page setMaxMinZoomScalesForCurrentBounds];
+    }
     
-	// Reset
-	_currentPageIndex = indexPriorToLayout;
-	_performingLayout = NO;
+    // Adjust contentOffset to preserve page location based on values collected prior to location
+    _pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:indexPriorToLayout];
+    [self didStartViewingPageAtIndex:_currentPageIndex]; // initial
+    
+    // Reset
+    _currentPageIndex = indexPriorToLayout;
+    _performingLayout = NO;
     
     // Super
     [super viewWillLayoutSubviews];
@@ -956,62 +897,62 @@ senderViewOriginalFrame:(CGRect)originalFrame
 
 - (void)performLayout {
     // Setup
-//    _performingLayout = YES;
-//    NSUInteger numberOfPhotos = [self numberOfPhotos];
-//    
-//	// Setup pages
-//    [_visiblePages removeAllObjects];
-//    [_recycledPages removeAllObjects];
-//    
-//    // Toolbar
-//    if (_displayToolbar) {
-//        [self.view addSubview:_toolbar];
-//    } else {
-//        [_toolbar removeFromSuperview];
-//    }
-//    
-//    // Close button
-//    if(_displayDoneButton && !self.navigationController.navigationBar)
-//        [self.view addSubview:_doneButton];
-//    
-//    // Toolbar items & navigation
-//    UIBarButtonItem *fixedLeftSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
-//                                                                                    target:self action:nil];
-//    fixedLeftSpace.width = 32; // To balance action button
-//    UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-//                                                                               target:self action:nil];
-//    NSMutableArray *items = [NSMutableArray new];
-//    
-//    if (_displayActionButton)
-//        [items addObject:fixedLeftSpace];
-//    [items addObject:flexSpace];
-//    
-//    if (numberOfPhotos > 1 && _displayArrowButton)
-//        [items addObject:_previousButton];
-//    
-//    if(_displayCounterLabel) {
-//        [items addObject:flexSpace];
-//        [items addObject:_counterButton];
-//    }
-//    
-//    [items addObject:flexSpace];
-//    if (numberOfPhotos > 1 && _displayArrowButton)
-//        [items addObject:_nextButton];
-//    [items addObject:flexSpace];
-//    
-//    if(_displayActionButton)
-//        [items addObject:_actionButton];
-//    
-//    [_toolbar setItems:items];
-//	[self updateToolbar];
+    //    _performingLayout = YES;
+    //    NSUInteger numberOfPhotos = [self numberOfPhotos];
+    //
+    //	// Setup pages
+    //    [_visiblePages removeAllObjects];
+    //    [_recycledPages removeAllObjects];
+    //
+    //    // Toolbar
+    //    if (_displayToolbar) {
+    //        [self.view addSubview:_toolbar];
+    //    } else {
+    //        [_toolbar removeFromSuperview];
+    //    }
+    //
+    //    // Close button
+    //    if(_displayDoneButton && !self.navigationController.navigationBar)
+    //        [self.view addSubview:_doneButton];
+    //
+    //    // Toolbar items & navigation
+    //    UIBarButtonItem *fixedLeftSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+    //                                                                                    target:self action:nil];
+    //    fixedLeftSpace.width = 32; // To balance action button
+    //    UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+    //                                                                               target:self action:nil];
+    //    NSMutableArray *items = [NSMutableArray new];
+    //
+    //    if (_displayActionButton)
+    //        [items addObject:fixedLeftSpace];
+    //    [items addObject:flexSpace];
+    //
+    //    if (numberOfPhotos > 1 && _displayArrowButton)
+    //        [items addObject:_previousButton];
+    //
+    //    if(_displayCounterLabel) {
+    //        [items addObject:flexSpace];
+    //        [items addObject:_counterButton];
+    //    }
+    //
+    //    [items addObject:flexSpace];
+    //    if (numberOfPhotos > 1 && _displayArrowButton)
+    //        [items addObject:_nextButton];
+    //    [items addObject:flexSpace];
+    //
+    //    if(_displayActionButton)
+    //        [items addObject:_actionButton];
+    //
+    //    [_toolbar setItems:items];
+    //	[self updateToolbar];
     
     // Content offset
-	_pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:_currentPageIndex];
+    _pagingScrollView.contentOffset = [self contentOffsetForPageAtIndex:_currentPageIndex];
     [self tilePages];
     _performingLayout = NO;
-	
-	if(! _disableVerticalSwipe)
-		[self.view addGestureRecognizer:_panGesture];
+    
+    if(! _disableVerticalSwipe)
+        [self.view addGestureRecognizer:_panGesture];
 }
 
 #pragma mark - Data
@@ -1051,16 +992,16 @@ senderViewOriginalFrame:(CGRect)originalFrame
 }
 
 - (UIImage *)imageForPhoto:(id<IDMPhoto>)photo {
-	if (photo) {
-		// Get image or obtain in background
-		if ([photo underlyingImage]) {
-			return [photo underlyingImage];
-		} else {
+    if (photo) {
+        // Get image or obtain in background
+        if ([photo underlyingImage]) {
+            return [photo underlyingImage];
+        } else {
             [photo loadUnderlyingImageAndNotify];
-		}
-	}
+        }
+    }
     
-	return nil;
+    return nil;
 }
 
 - (void)loadAdjacentPhotosIfNecessary:(id<IDMPhoto>)photo {
@@ -1109,83 +1050,83 @@ senderViewOriginalFrame:(CGRect)originalFrame
 #pragma mark - Paging
 
 - (void)tilePages {
-	// Calculate which pages should be visible
-	// Ignore padding as paging bounces encroach on that
-	// and lead to false page loads
-	CGRect visibleBounds = _pagingScrollView.bounds;
-	NSInteger iFirstIndex = (NSInteger) floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds));
-	NSInteger iLastIndex  = (NSInteger) floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds));
+    // Calculate which pages should be visible
+    // Ignore padding as paging bounces encroach on that
+    // and lead to false page loads
+    CGRect visibleBounds = _pagingScrollView.bounds;
+    NSInteger iFirstIndex = (NSInteger) floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds));
+    NSInteger iLastIndex  = (NSInteger) floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds));
     if (iFirstIndex < 0) iFirstIndex = 0;
     if (iFirstIndex > [self numberOfPhotos] - 1) iFirstIndex = [self numberOfPhotos] - 1;
     if (iLastIndex < 0) iLastIndex = 0;
     if (iLastIndex > [self numberOfPhotos] - 1) iLastIndex = [self numberOfPhotos] - 1;
-	
-	// Recycle no longer needed pages
+    
+    // Recycle no longer needed pages
     NSInteger pageIndex;
-	for (IDMZoomingScrollView *page in _visiblePages) {
+    for (IDMZoomingScrollView *page in _visiblePages) {
         pageIndex = PAGE_INDEX(page);
-		if (pageIndex < (NSUInteger)iFirstIndex || pageIndex > (NSUInteger)iLastIndex) {
-			[_recycledPages addObject:page];
+        if (pageIndex < (NSUInteger)iFirstIndex || pageIndex > (NSUInteger)iLastIndex) {
+            [_recycledPages addObject:page];
             [page prepareForReuse];
-			[page removeFromSuperview];
-			IDMLog(@"Removed page at index %i", PAGE_INDEX(page));
-		}
-	}
-	[_visiblePages minusSet:_recycledPages];
+            [page removeFromSuperview];
+            IDMLog(@"Removed page at index %i", PAGE_INDEX(page));
+        }
+    }
+    [_visiblePages minusSet:_recycledPages];
     while (_recycledPages.count > 2) // Only keep 2 recycled pages
         [_recycledPages removeObject:[_recycledPages anyObject]];
-	
-	// Add missing pages
-	for (NSUInteger index = (NSUInteger)iFirstIndex; index <= (NSUInteger)iLastIndex; index++) {
-		if (![self isDisplayingPageForIndex:index]) {
+    
+    // Add missing pages
+    for (NSUInteger index = (NSUInteger)iFirstIndex; index <= (NSUInteger)iLastIndex; index++) {
+        if (![self isDisplayingPageForIndex:index]) {
             // Add new page
-			IDMZoomingScrollView *page;
+            IDMZoomingScrollView *page;
             page = [[IDMZoomingScrollView alloc] initWithPhotoBrowser:self];
             page.backgroundColor = [UIColor clearColor];
             page.opaque = YES;
             
-			[self configurePage:page forIndex:index];
-			[_visiblePages addObject:page];
-			[_pagingScrollView addSubview:page];
-			IDMLog(@"Added page at index %i", index);
+            [self configurePage:page forIndex:index];
+            [_visiblePages addObject:page];
+            [_pagingScrollView addSubview:page];
+            IDMLog(@"Added page at index %i", index);
             
             // Add caption
             IDMCaptionView *captionView = [self captionViewForPhotoAtIndex:index];
             captionView.frame = [self frameForCaptionView:captionView atIndex:index];
             [_pagingScrollView addSubview:captionView];
             page.captionView = captionView;
-		}
-	}
+        }
+    }
 }
 
 - (BOOL)isDisplayingPageForIndex:(NSUInteger)index {
-	for (IDMZoomingScrollView *page in _visiblePages)
-		if (PAGE_INDEX(page) == index) return YES;
-	return NO;
+    for (IDMZoomingScrollView *page in _visiblePages)
+        if (PAGE_INDEX(page) == index) return YES;
+    return NO;
 }
 
 - (IDMZoomingScrollView *)pageDisplayedAtIndex:(NSUInteger)index {
-	IDMZoomingScrollView *thePage = nil;
-	for (IDMZoomingScrollView *page in _visiblePages) {
-		if (PAGE_INDEX(page) == index) {
-			thePage = page; break;
-		}
-	}
-	return thePage;
+    IDMZoomingScrollView *thePage = nil;
+    for (IDMZoomingScrollView *page in _visiblePages) {
+        if (PAGE_INDEX(page) == index) {
+            thePage = page; break;
+        }
+    }
+    return thePage;
 }
 
 - (IDMZoomingScrollView *)pageDisplayingPhoto:(id<IDMPhoto>)photo {
-	IDMZoomingScrollView *thePage = nil;
-	for (IDMZoomingScrollView *page in _visiblePages) {
-		if (page.photo == photo) {
-			thePage = page; break;
-		}
-	}
-	return thePage;
+    IDMZoomingScrollView *thePage = nil;
+    for (IDMZoomingScrollView *page in _visiblePages) {
+        if (page.photo == photo) {
+            thePage = page; break;
+        }
+    }
+    return thePage;
 }
 
 - (void)configurePage:(IDMZoomingScrollView *)page forIndex:(NSUInteger)index {
-	page.frame = [self frameForPageAtIndex:index];
+    page.frame = [self frameForPageAtIndex:index];
     page.tag = PAGE_INDEX_TAG_OFFSET + index;
     page.photo = [self photoAtIndex:index];
     
@@ -1197,11 +1138,11 @@ senderViewOriginalFrame:(CGRect)originalFrame
 }
 
 - (IDMZoomingScrollView *)dequeueRecycledPage {
-	IDMZoomingScrollView *page = [_recycledPages anyObject];
-	if (page) {
-		[_recycledPages removeObject:page];
-	}
-	return page;
+    IDMZoomingScrollView *page = [_recycledPages anyObject];
+    if (page) {
+        [_recycledPages removeObject:page];
+    }
+    return page;
 }
 
 // Handle page changes
@@ -1246,9 +1187,9 @@ senderViewOriginalFrame:(CGRect)originalFrame
 }
 
 - (CGPoint)contentOffsetForPageAtIndex:(NSUInteger)index {
-	CGFloat pageWidth = _pagingScrollView.bounds.size.width;
-	CGFloat newOffset = index * pageWidth;
-	return CGPointMake(newOffset, 0);
+    CGFloat pageWidth = _pagingScrollView.bounds.size.width;
+    CGFloat newOffset = index * pageWidth;
+    return CGPointMake(newOffset, 0);
 }
 
 - (BOOL)isLandscape:(UIInterfaceOrientation)orientation
@@ -1307,36 +1248,36 @@ senderViewOriginalFrame:(CGRect)originalFrame
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-	// Hide controls when dragging begins
-	[self setControlsHidden:YES animated:YES permanent:NO];
+    // Hide controls when dragging begins
+    [self setControlsHidden:YES animated:YES permanent:NO];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-	// Update toolbar when page changes
-	if(! _arrowButtonsChangePhotosAnimated) [self updateToolbar];
+    // Update toolbar when page changes
+    if(! _arrowButtonsChangePhotosAnimated) [self updateToolbar];
 }
 
 #pragma mark - Toolbar
 
 - (void)updateToolbar {
     // Counter
-	if ([self numberOfPhotos] > 1) {
-		_counterLabel.text = [NSString stringWithFormat:@"%@ %@ %lu", @(_currentPageIndex+1), IDMPhotoBrowserLocalizedStrings(@"of"), (unsigned long)[self numberOfPhotos]];
-	} else {
-		_counterLabel.text = nil;
-	}
+    if ([self numberOfPhotos] > 1) {
+        _counterLabel.text = [NSString stringWithFormat:@"%@ %@ %lu", @(_currentPageIndex+1), IDMPhotoBrowserLocalizedStrings(@"of"), (unsigned long)[self numberOfPhotos]];
+    } else {
+        _counterLabel.text = nil;
+    }
     
-	// Buttons
-	_previousButton.enabled = (_currentPageIndex > 0);
-	_nextButton.enabled = (_currentPageIndex < [self numberOfPhotos]-1);
+    // Buttons
+    _previousButton.enabled = (_currentPageIndex > 0);
+    _nextButton.enabled = (_currentPageIndex < [self numberOfPhotos]-1);
 }
 
 - (void)jumpToPageAtIndex:(NSUInteger)index {
     // Change page
-	if (index < [self numberOfPhotos]) {
-		CGRect pageFrame = [self frameForPageAtIndex:index];
+    if (index < [self numberOfPhotos]) {
+        CGRect pageFrame = [self frameForPageAtIndex:index];
         
-		if(_arrowButtonsChangePhotosAnimated)
+        if(_arrowButtonsChangePhotosAnimated)
         {
             [_pagingScrollView setContentOffset:CGPointMake(pageFrame.origin.x - PADDING, 0) animated:YES];
         }
@@ -1345,10 +1286,10 @@ senderViewOriginalFrame:(CGRect)originalFrame
             _pagingScrollView.contentOffset = CGPointMake(pageFrame.origin.x - PADDING, 0);
             [self updateToolbar];
         }
-	}
-	
-	// Update timer to give more time
-	[self hideControlsAfterDelay];
+    }
+    
+    // Update timer to give more time
+    [self hideControlsAfterDelay];
 }
 
 - (void)gotoPreviousPage { [self jumpToPageAtIndex:_currentPageIndex-1]; }
@@ -1376,29 +1317,29 @@ senderViewOriginalFrame:(CGRect)originalFrame
         for (UIView *v in captionViews) v.alpha = alpha;
     } completion:^(BOOL finished) {}];
     
-	// Control hiding timer
-	// Will cancel existing timer but only begin hiding if they are visible
-	if (!permanent) [self hideControlsAfterDelay];
+    // Control hiding timer
+    // Will cancel existing timer but only begin hiding if they are visible
+    if (!permanent) [self hideControlsAfterDelay];
     
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
 - (void)cancelControlHiding {
-	// If a timer exists then cancel and release
-	if (_controlVisibilityTimer) {
-		[_controlVisibilityTimer invalidate];
-		_controlVisibilityTimer = nil;
-	}
+    // If a timer exists then cancel and release
+    if (_controlVisibilityTimer) {
+        [_controlVisibilityTimer invalidate];
+        _controlVisibilityTimer = nil;
+    }
 }
 
 // Enable/disable control visiblity timer
 - (void)hideControlsAfterDelay {
-	// return;
+    // return;
     
     if (![self areControlsHidden]) {
         [self cancelControlHiding];
-		_controlVisibilityTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(hideControls) userInfo:nil repeats:NO];
-	}
+        _controlVisibilityTimer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(hideControls) userInfo:nil repeats:NO];
+    }
 }
 
 - (BOOL)areControlsHidden { return (_toolbar.alpha == 0); }
@@ -1413,7 +1354,7 @@ senderViewOriginalFrame:(CGRect)originalFrame
     if (index >= [self numberOfPhotos]) index = [self numberOfPhotos]-1;
     _initalPageIndex = index;
     _currentPageIndex = index;
-	if ([self isViewLoaded]) {
+    if ([self isViewLoaded]) {
         [self jumpToPageAtIndex:index];
         if (!_viewIsActive) [self tilePages]; // Force tiling if view is not visible
     }
@@ -1422,6 +1363,7 @@ senderViewOriginalFrame:(CGRect)originalFrame
 #pragma mark - Buttons
 
 - (void)doneButtonPressed:(id)sender {
+    
     if (_senderView && _currentPageIndex == _initalPageIndex) {
         IDMZoomingScrollView *scrollView = [self pageDisplayedAtIndex:_currentPageIndex];
         [self performCloseAnimationWithScrollView:scrollView];
@@ -1431,8 +1373,6 @@ senderViewOriginalFrame:(CGRect)originalFrame
         [self prepareForClosePhotoBrowser];
         [self dismissPhotoBrowserAnimated:YES];
     }
-    
-    [self dismissFullScreenViewController];
 }
 
 - (void)actionButtonPressed:(id)sender {
@@ -1500,109 +1440,18 @@ senderViewOriginalFrame:(CGRect)originalFrame
 
 - (void)animateView:(UIView *)view toFrame:(CGRect)frame completion:(void (^)(void))completion
 {
-	POPSpringAnimation *animation = [POPSpringAnimation animationWithPropertyNamed:kPOPViewFrame];
-	[animation setSpringBounciness:6];
-	[animation setDynamicsMass:1];
+    POPSpringAnimation *animation = [POPSpringAnimation animationWithPropertyNamed:kPOPViewFrame];
+    [animation setSpringBounciness:6];
+    [animation setDynamicsMass:1];
     [animation setToValue:[NSValue valueWithCGRect:frame]];
-	[view pop_addAnimation:animation forKey:nil];
+    [view pop_addAnimation:animation forKey:nil];
     
     if (completion)
-	{
-		[animation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
-			completion();
-		}];
-	}
-}
-
-
-#pragma mark - fullScreenWindow
--(UIWindow *)fullScreenWindow
-{
-    if (_fullScreenWindow == nil) {
-        _fullScreenWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        _fullScreenWindow.windowLevel = UIWindowLevelStatusBar + 1;
+    {
+        [animation setCompletionBlock:^(POPAnimation *animation, BOOL finished) {
+            completion();
+        }];
     }
-    
-    return _fullScreenWindow;
 }
 
-- (UIImageView *)snapshotFromParentmostViewController:(UIViewController *)viewController {
-    
-    UIViewController *presentingViewController = viewController.view.window.rootViewController;
-    while (presentingViewController.presentedViewController) presentingViewController = presentingViewController.presentedViewController;
-    UIImage *image = [UIImage takeSnapshotOfView:presentingViewController.view];
-    return [[UIImageView alloc] initWithImage:image];
-}
-
-- (void)showFromViewController:(UIViewController *)viewController
-{
-//    self.snapshotView = [self snapshotFromParentmostViewController:viewController];
-//    
-//    UIImage *blurImage = [[UIImage takeSnapshotOfView:_snapshotView] applyLightEffect];
-//    self.blurSnapshotView = [[UIImageView alloc] initWithImage:blurImage];
-//    self.blurSnapshotView.alpha = 0;
-//    
-//    [self.view addSubview:self.snapshotView];
-//    [self.view addSubview:self.blurSnapshotView];
-//    
-//    self.photoImageView = [[UIImageView alloc] initWithImage:self.iamge];
-//    self.photoImageView.contentMode = UIViewContentModeScaleAspectFit;
-//    self.photoImageView.frame = self.imageViewFrameInWindow;
-//    [self.view addSubview:self.photoImageView];
-    
-    
-    
-    [self.fullScreenWindow setRootViewController:self];
-    [self.fullScreenWindow makeKeyAndVisible];
-    
-//    NSLog(@"%@",[NSDate date]);
-//    [UIView animateKeyframesWithDuration:0.55
-//                                   delay:0.0
-//                                 options:UIViewKeyframeAnimationOptionCalculationModeLinear | UIViewKeyframeAnimationOptionCalculationModeCubic
-//                              animations:^{
-//                                  [UIView addKeyframeWithRelativeStartTime:0.0
-//                                                          relativeDuration:0.3 animations:^{
-//                                                              self.blurSnapshotView.alpha = 1.0;
-//                                                          }];
-//                                  
-//                                  [UIView addKeyframeWithRelativeStartTime:0.0
-//                                                          relativeDuration:0.2 animations:^{
-//                                                              self.photoImageView.frame = self.view.bounds;
-//                                                          }];
-//                              } completion:^(BOOL finished) {
-//                                  
-//                              }];
-    
-    
-}
-
-- (void)dismissFullScreenViewController
-{
-//    if (self.fullScreenWindow) {
-//        self.fullScreenWindow.hidden = YES;
-//        self.fullScreenWindow = nil;
-//    }
-
-//    [UIView animateKeyframesWithDuration:0.3
-//                                   delay:0.0
-//                                 options:UIViewKeyframeAnimationOptionCalculationModeLinear
-//                              animations:^{
-//                                  [UIView addKeyframeWithRelativeStartTime:0.0
-//                                                          relativeDuration:0.3 animations:^{
-//                                                              self.blurSnapshotView.alpha = 0.0;
-//                                                          }];
-//                                  
-//                                  [UIView addKeyframeWithRelativeStartTime:0.0
-//                                                          relativeDuration:0.3 animations:^{
-//                                                              self.photoImageView.frame = self.imageViewFrameInWindow;
-//                                                          }];
-//                              } completion:^(BOOL finished) {
-//                                  [self.photoImageView removeFromSuperview];
-//                                  [self.blurSnapshotView removeFromSuperview];
-//                                  [self.snapshotView removeFromSuperview];
-//                                  
-//                                  self.fullScreenWindow.hidden = YES;
-//                                  self.fullScreenWindow = nil;
-//                              }];
-}
 @end

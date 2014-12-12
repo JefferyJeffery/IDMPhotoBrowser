@@ -24,7 +24,7 @@
 @end
 
 // IDMPhotoBrowser
-@interface IDMPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate> 
+@interface IDMPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate>
 
 // Properties
 @property (nonatomic, strong) id <IDMPhotoBrowserDelegate> delegate;
@@ -60,22 +60,6 @@
 @property (nonatomic) float animationDuration;
 
 //// Init
-//- (id)initWithPhotos:(NSArray *)photosArray;
-//
-//// Init (animated)
-//- (id)initWithPhotos:(NSArray *)photosArray animatedFromView:(UIView*)view;
-//
-//// Init with NSURL objects
-//- (id)initWithPhotoURLs:(NSArray *)photoURLsArray;
-//
-//// Init with NSURL objects (animated)
-//- (id)initWithPhotoURLs:(NSArray *)photoURLsArray animatedFromView:(UIView*)view;
-
-// Init with NSURL objects (animated with background)
-//- (id)initWithPhotos:(NSArray *)photosArray
-//    animatedFromView:(UIView*)view
-//   viewOriginalFrame:(CGRect)originalFrame
-//backgroundScreenshot:(UIImage *)backgroundScreenshot;
 - (id)initWithPhotos:(NSArray *)photosArray
          contentMode:(UIViewContentMode)contentMode
 backgroundScreenshot:(UIImage *)backgroundScreenshot;
@@ -95,7 +79,4 @@ senderViewOriginalFrame:(CGRect)originalFrame
 
 // Get IDMPhoto at index
 - (id<IDMPhoto>)photoAtIndex:(NSUInteger)index;
-
-- (void)showFromViewController:(UIViewController *)viewController;
-- (void)dismissFullScreenViewController;
 @end
