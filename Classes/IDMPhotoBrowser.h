@@ -50,7 +50,7 @@
 @property (nonatomic) BOOL arrowButtonsChangePhotosAnimated;
 
 @property (nonatomic) BOOL forceHideStatusBar;
-@property (nonatomic) BOOL usePopAnimation;
+//@property (nonatomic) BOOL usePopAnimation;
 @property (nonatomic) BOOL disableVerticalSwipe;
 
 // defines zooming of the background (default 1.0)
@@ -59,24 +59,33 @@
 // animation time (default .28)
 @property (nonatomic) float animationDuration;
 
-// Init
-- (id)initWithPhotos:(NSArray *)photosArray;
-
-// Init (animated)
-- (id)initWithPhotos:(NSArray *)photosArray animatedFromView:(UIView*)view;
-
-// Init with NSURL objects
-- (id)initWithPhotoURLs:(NSArray *)photoURLsArray;
-
-// Init with NSURL objects (animated)
-- (id)initWithPhotoURLs:(NSArray *)photoURLsArray animatedFromView:(UIView*)view;
+//// Init
+//- (id)initWithPhotos:(NSArray *)photosArray;
+//
+//// Init (animated)
+//- (id)initWithPhotos:(NSArray *)photosArray animatedFromView:(UIView*)view;
+//
+//// Init with NSURL objects
+//- (id)initWithPhotoURLs:(NSArray *)photoURLsArray;
+//
+//// Init with NSURL objects (animated)
+//- (id)initWithPhotoURLs:(NSArray *)photoURLsArray animatedFromView:(UIView*)view;
 
 // Init with NSURL objects (animated with background)
-- (id)initWithPhotoURLs:(NSArray *)photoURLsArray
-       animatedFromView:(UIView*)view
-      viewOriginalFrame:(CGRect)originalFrame
-   backgroundScreenshot:(UIImage *)backgroundScreenshot;
+//- (id)initWithPhotos:(NSArray *)photosArray
+//    animatedFromView:(UIView*)view
+//   viewOriginalFrame:(CGRect)originalFrame
+//backgroundScreenshot:(UIImage *)backgroundScreenshot;
+- (id)initWithPhotos:(NSArray *)photosArray
+         contentMode:(UIViewContentMode)contentMode
+backgroundScreenshot:(UIImage *)backgroundScreenshot;
 
+-    (id)initWithPhotos:(NSArray *)photosArray
+          animatedImage:(UIImage*)image
+            contentMode:(UIViewContentMode)contentMode
+senderViewOriginalFrame:(CGRect)originalFrame
+             senderView:(UIView*)view
+   backgroundScreenshot:(UIImage *)backgroundScreenshot;
 
 // Reloads the photo browser and refetches data
 - (void)reloadData;
