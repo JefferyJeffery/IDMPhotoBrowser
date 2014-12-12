@@ -212,21 +212,24 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
         
         _applicationWindow = [[[UIApplication sharedApplication] delegate] window];
 		
-		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0"))
-		{
-			self.modalPresentationStyle = UIModalPresentationCustom;
-			self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-		}
-		else
-		{
-			_applicationTopViewController = [self topviewController];
-			_previousModalPresentationStyle = _applicationTopViewController.modalPresentationStyle;
-			_applicationTopViewController.modalPresentationStyle = UIModalPresentationCurrentContext;
-			self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-		}
-		
-		self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-		
+//		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0"))
+//		{
+//			self.modalPresentationStyle = UIModalPresentationCustom;
+//			self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+//		}
+//		else
+//		{
+//			_applicationTopViewController = [self topviewController];
+//			_previousModalPresentationStyle = _applicationTopViewController.modalPresentationStyle;
+//			_applicationTopViewController.modalPresentationStyle = UIModalPresentationCurrentContext;
+//			self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+//		}
+//		
+//		self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+
+        self.modalPresentationStyle = UIModalPresentationCustom;
+        self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        
         // Listen for IDMPhoto notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleIDMPhotoLoadingDidEndNotification:)
@@ -557,16 +560,13 @@ senderViewOriginalFrame:(CGRect)originalFrame
                                                                     resizableImageView.layer.frame = finalImageViewFrame;
                                                                 }];
 
-                                  [UIView addKeyframeWithRelativeStartTime:0.95
-                                                          relativeDuration:0.05
-                                                                animations:^{
-                                                                    for (UIView *view in _visiblePages) {
-                                                                        view.alpha = 1.0;
-                                                                    }
-                                                                }];
                                   
                             } completion:^(BOOL finished) {
 
+                                for (UIView *view in _visiblePages) {
+                                    view.alpha = 1.0;
+                                }
+                                
                                 [fadeView removeFromSuperview];
                                 [resizableImageView removeFromSuperview];
                                 
