@@ -24,13 +24,17 @@ PODS:
   - ImageEffects (0.0.4)
   - pop (1.0.7)
   - Reveal-iOS-SDK (1.0.6)
+  - SDWebImage (3.7.1):
+    - SDWebImage/Core (= 3.7.1)
+  - SDWebImage/Core (3.7.1)
 
 DEPENDENCIES:
-  - AFNetworking
-  - DACircularProgress
+  - AFNetworking (~> 2.5)
+  - DACircularProgress (~> 2.2.0)
   - ImageEffects (from `https://github.com/JefferyJeffery/ImageEffects.git`, tag `0.0.4`)
-  - pop
+  - pop (~> 1.0.7)
   - Reveal-iOS-SDK
+  - SDWebImage (~> 3.7)
 
 EXTERNAL SOURCES:
   ImageEffects:
@@ -48,5 +52,6 @@ SPEC CHECKSUMS:
   ImageEffects: b78527dcf84ac1feb9f76cb89e954bc224d6c4fd
   pop: 2f14a1ea61339767af9e66741b418c831b3844df
   Reveal-iOS-SDK: 74a39b426dbc915962704ed24f43ee32ae7797f9
+  SDWebImage: 116e88633b5b416ea0ca4b334a4ac59cf72dd38d
 
 COCOAPODS: 0.35.0

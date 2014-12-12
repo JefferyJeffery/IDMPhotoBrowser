@@ -73,7 +73,7 @@
 
 #pragma mark - Actions
 
-- (void)buttonWithImageOnScreenPressed:(id)sender
+- (void)buttonWithImageOnScreenPressed:(UIButton *)sender
 {
     UIButton *buttonSender = (UIButton*)sender;
     
@@ -111,14 +111,15 @@
     CGRect frame = [((UIView *)sender).superview convertRect:((UIView *)sender).frame toView:nil];
     
     // Create and setup browser
-    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotoURLs:[NSArray arrayWithObjects:[NSURL URLWithString:@"http://farm4.static.flickr.com/3567/3523321514_371d9ac42f_b.jpg"], @"http://farm4.static.flickr.com/3629/3339128908_7aecabc34b_b.jpg", [NSURL URLWithString:@"http://farm4.static.flickr.com/3364/3338617424_7ff836d55f_b.jpg"], @"http://farm4.static.flickr.com/3590/3329114220_5fbc5bc92b_b.jpg", nil] animatedFromView:sender viewOriginalFrame:frame backgroundScreenshot:nil]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+//    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:photos animatedFromView:sender viewOriginalFrame:frame backgroundScreenshot:nil]; // using initWithPhotos:animatedFromView: method to use the zoom-in animation
+    
+    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:photos animatedImage:buttonSender.currentImage contentMode:buttonSender.imageView.contentMode senderViewOriginalFrame:frame senderView:buttonSender backgroundScreenshot:nil];
     
     browser.delegate = self;
     browser.displayActionButton = NO;
     browser.displayArrowButton = YES;
     browser.displayCounterLabel = YES;
-    browser.usePopAnimation = YES;
-    browser.scaleImage = buttonSender.currentImage;
+    [browser setInitialPageIndex:0];
     if(buttonSender.tag == 102) browser.useWhiteBackgroundColor = YES;
     
     // Show
@@ -227,7 +228,10 @@
     }
     
     // Create and setup browser
-    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:photos];
+//    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:photos animatedFromView:nil viewOriginalFrame:CGRectZero backgroundScreenshot:nil];
+    
+    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:photos contentMode:UIViewContentModeScaleAspectFit backgroundScreenshot:nil];
+    
     browser.delegate = self;
     
     if(indexPath.section == 1) // Multiple photos

@@ -2,9 +2,10 @@
 # platform :ios, '6.0'
 
 target 'PhotoBrowserDemo' do
-pod 'AFNetworking'
-pod 'DACircularProgress'
-pod 'pop'
+
+pod 'SDWebImage', '~> 3.7'
+pod 'DACircularProgress', '~>2.2.0'
+pod 'pop', '~>1.0.7'
 pod 'ImageEffects', :git => 'https://github.com/JefferyJeffery/ImageEffects.git', :tag => "0.0.4"
 pod 'Reveal-iOS-SDK', :configurations => ['Debug']
 end
